@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.Currency;
 import java.util.Locale;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,27 +31,62 @@ import com.tgt.retail.api.product.constants.MessageConstants;
 import com.tgt.retail.api.product.vo.Price;
 import com.tgt.retail.api.product.vo.ProductPrice;
 import com.tgt.retail.api.product.vo.ResponseInfo;
+import com.tgt.retail.security.TokenAuthenticationFilter;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class RetailProductApiTests {
-
+	
 	@Test
 	public void contextLoads() {
 	}
+	
+	private String hostName = "localhost";
 	
 	@LocalServerPort
 	private int port;
 
 	@Autowired
 	private TestRestTemplate restTemplate;
+	
+	private String authToken;
+	
+	@Before
+	public void setup() {
+		 URI loginUri= UriComponentsBuilder.newInstance().scheme("http").host(hostName).port(port)
+				.path("/auth/login/").build().toUri();
+		 HttpHeaders headers = new HttpHeaders();
+		 headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		 MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		 map.add("username", "test");
+		 map.add("password", "test");
+		 HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		 ResponseEntity<String> response = this.restTemplate.postForEntity( loginUri, request , String.class );
+		 authToken = response.getBody();
+	}
+	
+	
+	@Test(expected = Exception.class)
+	public void authenticationTest_withNoToken() throws Exception {
+		String productId = "13860416";
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+		HttpEntity<ProductPrice> requestEntity = new HttpEntity<ProductPrice>(null, headers);
+		ResponseEntity<ProductPrice> result = this.restTemplate.exchange(getURI(productId), HttpMethod.GET,
+				requestEntity, ProductPrice.class);
+		assertThat(result.getBody().getProductId())
+				.isEqualTo(Long.valueOf(productId));
+		assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
+		assertThat(result.getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
+	}
+	
 
 	@Test
 	public void getProductInfoTest_ForValidProductID() throws Exception {
 		String productId = "13860416";
 		ResponseEntity<ProductPrice> result = this.restTemplate.exchange(getURI(productId), HttpMethod.GET,
 				getRequestEntity(null), ProductPrice.class);
-		assertThat(this.restTemplate.getForObject(getURI(productId), ProductPrice.class).getProductId())
+		assertThat(result.getBody().getProductId())
 				.isEqualTo(Long.valueOf(productId));
 		assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
 		assertThat(result.getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
@@ -178,12 +215,11 @@ public class RetailProductApiTests {
 	}
 
 	public HttpEntity<ProductPrice> getRequestEntity(ProductPrice productPrice) {
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+		headers.add(HttpHeaders.AUTHORIZATION, TokenAuthenticationFilter.BEARER+" "+authToken);
 		HttpEntity<ProductPrice> requestEntity = new HttpEntity<ProductPrice>(productPrice, headers);
 		return requestEntity;
 	}
-
-
 
 }

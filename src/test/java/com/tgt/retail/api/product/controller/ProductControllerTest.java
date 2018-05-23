@@ -44,6 +44,7 @@ public class ProductControllerTest {
 	private MockMvc mockMvc;
 
 	String priceJson;
+	
 	ObjectMapper objMapper = new ObjectMapper();
 
 	@Before
@@ -81,7 +82,9 @@ public class ProductControllerTest {
 
 	@Test
 	public void getProductsTest_ForInValidProduct() throws Exception {
-		when(productService.getProductInfo("13860422")).thenReturn(new ProductPrice());
+		when(productService.getProductInfo("13860422")).thenReturn(new ProductPrice(13860416,
+				"Progressive power yoga:Sedona experie (DVD)",
+				new Price(BigDecimal.valueOf(1000), Currency.getInstance(Locale.getDefault()).getCurrencyCode())));
 		mockMvc.perform(get("/api/products/13860422/").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andReturn();

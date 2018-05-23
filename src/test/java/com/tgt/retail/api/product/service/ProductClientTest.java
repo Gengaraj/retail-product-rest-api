@@ -1,6 +1,7 @@
 package com.tgt.retail.api.product.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,15 +45,17 @@ public class ProductClientTest {
 				Mockito.<HttpEntity<?>>any(), Mockito.<Class<?>>any(), Mockito.<String, String>anyMap()))
 				.thenReturn((ResponseEntity) response);
 		String productDescription = productClient.getProductNameById(Long.valueOf(13860416));
-		assertEquals(productDescription, "Progressive power yoga:Sedona experie (DVD)");
+		assertEquals(productDescription, product.getName());
 	}
 
 	@Test(expected = Exception.class)
 	public void getProductDescriptionById_Failure() {
+		Product product = new Product(13860416, "Progressive power yoga:Sedona experie (DVD)");
 		Mockito.when(mockRestTemplate.exchange(Mockito.anyString(), Mockito.<HttpMethod>any(),
 				Mockito.<HttpEntity<?>>any(), Mockito.<Class<?>>any(), Mockito.<String, String>anyMap()))
 				.thenThrow(new ProductNotFoundException(123456));
-		productClient.getProductNameById(Long.valueOf(123456));
+		String productDescription = productClient.getProductNameById(Long.valueOf(123456));
+		assertNotEquals(productDescription, product.getName());
 	}
 
 }

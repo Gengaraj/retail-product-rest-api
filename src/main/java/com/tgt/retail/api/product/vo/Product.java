@@ -3,7 +3,7 @@ package com.tgt.retail.api.product.vo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.tgt.retail.api.product.config.ProductDeserializer;
+import com.tgt.retail.product.util.ProductDeserializer;
 
 @JsonDeserialize(using = ProductDeserializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)

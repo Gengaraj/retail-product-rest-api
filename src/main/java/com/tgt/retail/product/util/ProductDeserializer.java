@@ -1,4 +1,4 @@
-package com.tgt.retail.api.product.config;
+package com.tgt.retail.product.util;
 
 import java.io.IOException;
 

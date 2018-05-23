@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.client.RestTemplate;
 
 import com.tgt.retail.api.product.repository.ProductRepository;
@@ -18,18 +19,19 @@ import com.tgt.retail.api.product.vo.Price;
 import com.tgt.retail.api.product.vo.ProductPrice;
 
 @Configuration
+@EnableAspectJAutoProxy
 public class ApplicationConfig {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
 	@Autowired
 	private ProductRepository productRepository;
-	
+
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.setConnectTimeout(1000).setReadTimeout(1000).build();
 	}
-	
+
 	@Bean
 	CommandLineRunner runner() {
 		logger.info("Prepopulating mongo db for product price values");
@@ -54,8 +56,8 @@ public class ApplicationConfig {
 					new Price(BigDecimal.valueOf(9000), Currency.getInstance(Locale.getDefault()).getCurrencyCode())));
 			productRepository.save(new ProductPrice(13860433,
 					new Price(BigDecimal.valueOf(10000), Currency.getInstance(Locale.getDefault()).getCurrencyCode())));
-			/*productRepository.save(new ProductPrice(16696652,
-					new Price(BigDecimal.valueOf(11000), Currency.getInstance(Locale.getDefault()).getCurrencyCode())));*/
+			productRepository.save(new ProductPrice(16696652,
+					new Price(BigDecimal.valueOf(11000), Currency.getInstance(Locale.getDefault()).getCurrencyCode())));
 		};
 	}
 

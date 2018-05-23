@@ -1,5 +1,6 @@
 package com.tgt.retail.api.product.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -54,7 +55,11 @@ public class ProductServiceTest {
 
 	@Test
 	public void getProductPriceByIdTest_inValidProductId() throws Exception {
-		assertEquals(productService.findProductPriceByProductId(Long.valueOf(12345678)),null);
+		ProductPrice productPrice = new ProductPrice(13860416,
+				new Price(BigDecimal.valueOf(2000), Currency.getInstance(Locale.getDefault()).getCurrencyCode()));
+		Mockito.when(mockProductrepository.findProductPriceByProductId(Mockito.anyLong())).thenReturn(productPrice);
+		ProductPrice actualPrice = productService.findProductPriceByProductId(Long.valueOf(13860422));
+		assertThat(actualPrice.getProductId()).isNotEqualTo(Long.valueOf(13860422));
 	}
 
 }
