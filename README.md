@@ -24,31 +24,31 @@ Docker 18.03.1
 ### Installing
 
 ```
-* Clone the Repository or download the zip folder from GITHub. https://github.com/Gengaraj/retail-product-rest-api
+Clone the Repository or download the zip folder from GITHub. https://github.com/Gengaraj/retail-product-rest-api
 ```
 
 ## Running the tests
 
 ```
-* Navigate to application folder and execute mvn clean test
+Navigate to application folder and execute 
+mvn clean test
 ```
 
-## Built With Maven and run from Java artifact
+## Build With Maven and run from Java artifact
 
 ```
-* mvn clean install
-* java -jar target/retail-product-rest-api-0.0.1-SNAPSHOT.jar
+mvn clean install
+java -jar target/retail-product-rest-api-0.0.1-SNAPSHOT.jar
 ```
 
 
 ## Start as Spring Boot Application using Maven
 
 ```
-* mvn spring-boot:run (To Start as Spring boot application)
+mvn spring-boot:run (To Start as Spring boot application)
 ```
 
-###Bonus 
-## Built With Maven, build docker image and run Container  
+## Bonus : Build With Maven, build docker image and run Container  
 
 ```
 To run the application and mongo db in docker container, please update the maven pom.xml file in the application folder to change the embedded mongo db dependency scope to test [uncomment the line# 69])
@@ -75,7 +75,7 @@ curl -XPOST -d 'username=test&password=test' http://localhost:8080/auth/login
 
 curl -H 'Authorization: Bearer <<<TokenReceived From Login Response>>>' http://localhost:8080/api/v1/products/13860416
 
-curl -X PUT -H 'Authorization: Bearer <<<TokenReceived From Login Response' -H 'Content-Type: application/json' -d '{"id":13860416,"name":"Progressive power yoga:Sedona experie (DVD)","current_price":{"value":1000,"currency_code":"USD"}}' http://localhost:8080/api/v1/products/13860416
+curl -X PUT -H 'Authorization: Bearer <<<TokenReceived From Login Response>>>' -H 'Content-Type: application/json' -d '{"id":13860416,"name":"Progressive power yoga:Sedona experie (DVD)","current_price":{"value":1000,"currency_code":"USD"}}' http://localhost:8080/api/v1/products/13860416
 
 Sample Product Ids: 13860416, 13860418, 13860420, 13860421, 13860424, 13860425
 ```
