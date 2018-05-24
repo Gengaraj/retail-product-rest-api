@@ -11,6 +11,7 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -48,7 +49,7 @@ public class ProductServiceTest {
 	public void getProductPriceByIdTest_validProductId() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416,
 				new Price(BigDecimal.valueOf(2000), Currency.getInstance(Locale.getDefault()).getCurrencyCode()));
-		Mockito.when(mockProductrepository.findProductPriceByProductId(Mockito.anyLong())).thenReturn(productPrice);
+		Mockito.when(mockProductrepository.findProductPriceByProductId(ArgumentMatchers.anyLong())).thenReturn(productPrice);
 		ProductPrice actualPrice = productService.findProductPriceByProductId(Long.valueOf(13860416));
 		assertEquals(productPrice.getProductId(), actualPrice.getProductId());
 	}
@@ -57,7 +58,7 @@ public class ProductServiceTest {
 	public void getProductPriceByIdTest_inValidProductId() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416,
 				new Price(BigDecimal.valueOf(2000), Currency.getInstance(Locale.getDefault()).getCurrencyCode()));
-		Mockito.when(mockProductrepository.findProductPriceByProductId(Mockito.anyLong())).thenReturn(productPrice);
+		Mockito.when(mockProductrepository.findProductPriceByProductId(ArgumentMatchers.anyLong())).thenReturn(productPrice);
 		ProductPrice actualPrice = productService.findProductPriceByProductId(Long.valueOf(13860422));
 		assertThat(actualPrice.getProductId()).isNotEqualTo(Long.valueOf(13860422));
 	}

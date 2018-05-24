@@ -18,6 +18,9 @@ import com.tgt.retail.api.product.repository.ProductRepository;
 import com.tgt.retail.api.product.vo.Price;
 import com.tgt.retail.api.product.vo.ProductPrice;
 
+/*
+ * Java Configuration class to define beans and their dependencies
+ */
 @Configuration
 @EnableAspectJAutoProxy
 public class ApplicationConfig {
@@ -32,6 +35,10 @@ public class ApplicationConfig {
 		return builder.setConnectTimeout(1000).setReadTimeout(1000).build();
 	}
 
+	/*
+	 * Bean definition to to populate the data in Mongo DB with sample Product ID
+	 * with price information during application startup
+	 */
 	@Bean
 	CommandLineRunner runner() {
 		logger.info("Prepopulating mongo db for product price values");

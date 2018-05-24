@@ -2,6 +2,9 @@ package com.tgt.retail.api.product.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/*
+ * Value object to hold the information about the response such as code, message and response type (Error or Success) 
+ */
 public class ResponseInfo {
 
 	@JsonProperty("Code")
@@ -12,7 +15,7 @@ public class ResponseInfo {
 
 	@JsonProperty("Response Type")
 	private String responseType;
-	
+
 	public ResponseInfo() {
 	}
 

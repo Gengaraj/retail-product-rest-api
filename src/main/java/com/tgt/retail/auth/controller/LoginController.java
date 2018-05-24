@@ -16,15 +16,27 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
+/*
+ *Login Controller to handle the authentication request  
+ */
 @RestController
 @RequestMapping("/auth/")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @AllArgsConstructor(access = PACKAGE)
 public class LoginController {
-	
+
 	@NonNull
 	UserAuthenticationService authentication;
 
+	/**
+	 * Handler method to handle authentication request and provide Bearer Token back
+	 * in the response
+	 * 
+	 * @param request
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	@PostMapping("/login")
 	String login(final HttpServletRequest request, @RequestParam("username") final String username,
 			@RequestParam("password") final String password) {

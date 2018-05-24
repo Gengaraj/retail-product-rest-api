@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -18,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.tgt.retail.api.product.exception.ProductNotFoundException;
-import com.tgt.retail.api.product.service.ProductClient;
 import com.tgt.retail.api.product.vo.Product;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,8 +41,8 @@ public class ProductClientTest {
 	public void getProductDescriptionById_Success() {
 		Product product = new Product(13860416, "Progressive power yoga:Sedona experie (DVD)");
 		ResponseEntity<Product> response = new ResponseEntity<Product>(product, HttpStatus.ACCEPTED);
-		Mockito.when(mockRestTemplate.exchange(Mockito.anyString(), Mockito.<HttpMethod>any(),
-				Mockito.<HttpEntity<?>>any(), Mockito.<Class<?>>any(), Mockito.<String, String>anyMap()))
+		Mockito.when(mockRestTemplate.exchange(ArgumentMatchers.anyString(), ArgumentMatchers.<HttpMethod>any(),
+				ArgumentMatchers.<HttpEntity<?>>any(), ArgumentMatchers.<Class<?>>any(), ArgumentMatchers.<String, String>anyMap()))
 				.thenReturn((ResponseEntity) response);
 		String productDescription = productClient.getProductNameById(Long.valueOf(13860416));
 		assertEquals(productDescription, product.getName());
@@ -51,8 +51,8 @@ public class ProductClientTest {
 	@Test(expected = Exception.class)
 	public void getProductDescriptionById_Failure() {
 		Product product = new Product(13860416, "Progressive power yoga:Sedona experie (DVD)");
-		Mockito.when(mockRestTemplate.exchange(Mockito.anyString(), Mockito.<HttpMethod>any(),
-				Mockito.<HttpEntity<?>>any(), Mockito.<Class<?>>any(), Mockito.<String, String>anyMap()))
+		Mockito.when(mockRestTemplate.exchange(ArgumentMatchers.anyString(), ArgumentMatchers.<HttpMethod>any(),
+				ArgumentMatchers.<HttpEntity<?>>any(), ArgumentMatchers.<Class<?>>any(), ArgumentMatchers.<String, String>anyMap()))
 				.thenThrow(new ProductNotFoundException(123456));
 		String productDescription = productClient.getProductNameById(Long.valueOf(123456));
 		assertNotEquals(productDescription, product.getName());

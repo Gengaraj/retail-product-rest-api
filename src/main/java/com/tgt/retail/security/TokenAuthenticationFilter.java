@@ -1,6 +1,7 @@
 package com.tgt.retail.security;
 
 import static java.util.Optional.ofNullable;
+
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.commons.lang3.StringUtils.removeStart;
 
@@ -20,6 +21,9 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import lombok.experimental.FieldDefaults;
 
+/*
+ * Overriding Spring securities default Authentication processing filter to configure token based authentication
+ */
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 

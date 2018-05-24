@@ -33,39 +33,51 @@ import com.tgt.retail.api.product.vo.ProductPrice;
 import com.tgt.retail.api.product.vo.ResponseInfo;
 import com.tgt.retail.security.TokenAuthenticationFilter;
 
+/**
+ * Integration Test Unit
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class RetailProductApiTests {
-	
+
 	@Test
 	public void contextLoads() {
 	}
-	
+
 	private String hostName = "localhost";
-	
+
 	@LocalServerPort
 	private int port;
 
 	@Autowired
 	private TestRestTemplate restTemplate;
-	
+
 	private String authToken;
-	
+
+	/**
+	 * Setup the login and retrieve the Auth token to be used submitting the
+	 * requests to product End point
+	 */
 	@Before
 	public void setup() {
-		 URI loginUri= UriComponentsBuilder.newInstance().scheme("http").host(hostName).port(port)
-				.path("/auth/login/").build().toUri();
-		 HttpHeaders headers = new HttpHeaders();
-		 headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		 MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-		 map.add("username", "test");
-		 map.add("password", "test");
-		 HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-		 ResponseEntity<String> response = this.restTemplate.postForEntity( loginUri, request , String.class );
-		 authToken = response.getBody();
+		URI loginUri = UriComponentsBuilder.newInstance().scheme("http").host(hostName).port(port).path("/auth/login/")
+				.build().toUri();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+		map.add("username", "test");
+		map.add("password", "test");
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		ResponseEntity<String> response = this.restTemplate.postForEntity(loginUri, request, String.class);
+		authToken = response.getBody();
 	}
-	
-	
+
+	/**
+	 * Validating the authentication with getProduct Request by not providing the
+	 * auth token
+	 * 
+	 * @throws Exception
+	 */
 	@Test(expected = Exception.class)
 	public void authenticationTest_withNoToken() throws Exception {
 		String productId = "13860416";
@@ -74,24 +86,31 @@ public class RetailProductApiTests {
 		HttpEntity<ProductPrice> requestEntity = new HttpEntity<ProductPrice>(null, headers);
 		ResponseEntity<ProductPrice> result = this.restTemplate.exchange(getURI(productId), HttpMethod.GET,
 				requestEntity, ProductPrice.class);
-		assertThat(result.getBody().getProductId())
-				.isEqualTo(Long.valueOf(productId));
+		assertThat(result.getBody().getProductId()).isEqualTo(Long.valueOf(productId));
 		assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
 		assertThat(result.getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
 	}
-	
 
+	/**
+	 * Validating the getProduct Request for the invalid product ID
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void getProductInfoTest_ForValidProductID() throws Exception {
 		String productId = "13860416";
 		ResponseEntity<ProductPrice> result = this.restTemplate.exchange(getURI(productId), HttpMethod.GET,
 				getRequestEntity(null), ProductPrice.class);
-		assertThat(result.getBody().getProductId())
-				.isEqualTo(Long.valueOf(productId));
+		assertThat(result.getBody().getProductId()).isEqualTo(Long.valueOf(productId));
 		assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
 		assertThat(result.getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
 	}
 
+	/**
+	 * Validating the getProduct Request for the invalid product ID
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void getProductInfoTest_ForInValidProdcutID() throws Exception {
 		String productId = "testsetst";
@@ -104,6 +123,11 @@ public class RetailProductApiTests {
 		assertEquals(result.getBody().getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the getProduct Request for the product does not exist
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void getProductInfoTest_ForProduct404() throws Exception {
 		String productId = "12324";
@@ -116,6 +140,11 @@ public class RetailProductApiTests {
 		assertEquals(result.getBody().getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product price update with valid product id in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_ForValidProductID() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416,
@@ -130,6 +159,11 @@ public class RetailProductApiTests {
 		assertEquals(result.getBody().getResponseType(), MessageConstants.RESPONSE_TYPE_SUCCESS);
 	}
 
+	/**
+	 * Validating the product price update with invalid product id in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_ForInValidProductID() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416,
@@ -141,6 +175,11 @@ public class RetailProductApiTests {
 		assertThat(result.getHeaders().getContentType().equals(MediaType.APPLICATION_JSON));
 	}
 
+	/**
+	 * Validating the product price update with valid currency code in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_WithInValidCurrencyCode() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416, new Price(BigDecimal.valueOf(2000), "ABCD"));
@@ -154,6 +193,12 @@ public class RetailProductApiTests {
 		assertEquals(result.getBody().getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product price update with no currency code information in the
+	 * request
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_WithBlankCurrencyCode() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416, new Price(BigDecimal.valueOf(2000), null));
@@ -167,6 +212,12 @@ public class RetailProductApiTests {
 		assertEquals(result.getBody().getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product price update with invalid price information in the
+	 * request
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_WithInValidPrice() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416,
@@ -181,6 +232,11 @@ public class RetailProductApiTests {
 		assertEquals(result.getBody().getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product price update with no price information in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_WithNoPrice() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416, null);
@@ -194,6 +250,12 @@ public class RetailProductApiTests {
 		assertEquals(result.getBody().getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product Id mismatch between the URI and
+	 * Request Body
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_URIandBodyProductId_Mismatch() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860428,
@@ -211,13 +273,13 @@ public class RetailProductApiTests {
 	public URI getURI(String productId) {
 		String hostName = "localhost";
 		return UriComponentsBuilder.newInstance().scheme("http").host(hostName).port(port)
-				.path("/api/products/{productId}").build(productId);
+				.path("/api/v1/products/{productId}").build(productId);
 	}
 
 	public HttpEntity<ProductPrice> getRequestEntity(ProductPrice productPrice) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-		headers.add(HttpHeaders.AUTHORIZATION, TokenAuthenticationFilter.BEARER+" "+authToken);
+		headers.add(HttpHeaders.AUTHORIZATION, TokenAuthenticationFilter.BEARER + " " + authToken);
 		HttpEntity<ProductPrice> requestEntity = new HttpEntity<ProductPrice>(productPrice, headers);
 		return requestEntity;
 	}

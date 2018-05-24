@@ -7,6 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/*
+ * Value object to hold the details about product and associated product information
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collection = "productprice")
 public class ProductPrice {
@@ -14,12 +17,12 @@ public class ProductPrice {
 	@Id
 	@JsonProperty("id")
 	private long productId;
-	
+
 	@Transient
 	@JsonProperty("name")
 	private String productName;
 
-	@JsonProperty("current_price")	
+	@JsonProperty("current_price")
 	private Price price;
 
 	public ProductPrice() {
@@ -30,7 +33,7 @@ public class ProductPrice {
 		this.productName = productName;
 		this.price = price;
 	}
-	
+
 	public ProductPrice(long productId, Price price) {
 		this.productId = productId;
 		this.price = price;
@@ -59,10 +62,10 @@ public class ProductPrice {
 	public void setPrice(Price price) {
 		this.price = price;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "product id : "+this.productId+", current price : "+this.price.toString();
+		return "product id : " + this.productId + ", current price : " + this.price.toString();
 	}
 
 }

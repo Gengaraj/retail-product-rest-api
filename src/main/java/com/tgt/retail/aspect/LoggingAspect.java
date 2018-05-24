@@ -8,6 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+/*
+ * Logging Aspect to print the information time taken to complete any intended
+ * operation, this aspect will be applicable for any methods from the package
+ * com.tgt.retail and sub packages
+ */
 @Aspect
 @Component
 public class LoggingAspect {

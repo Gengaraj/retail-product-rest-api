@@ -32,6 +32,9 @@ import com.tgt.retail.api.product.vo.Price;
 import com.tgt.retail.api.product.vo.ProductPrice;
 import com.tgt.retail.api.product.vo.ResponseInfo;
 
+/**
+ * Product Controller slice Testing
+ */
 public class ProductControllerTest {
 
 	Logger logger = Logger.getLogger(ProductControllerTest.class.getName());
@@ -44,9 +47,12 @@ public class ProductControllerTest {
 	private MockMvc mockMvc;
 
 	String priceJson;
-	
+
 	ObjectMapper objMapper = new ObjectMapper();
 
+	/**
+	 * Mock Setup the dependencies
+	 */
 	@Before
 	public void setup() {
 		ProductPrice productPrice = new ProductPrice(13860416, "Progressive power yoga:Sedona experie (DVD)",
@@ -63,12 +69,17 @@ public class ProductControllerTest {
 		}
 	}
 
+	/**
+	 * Validating the getProduct Request for the valid product ID
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void getProductsTest_ForValidProduct() throws Exception {
 		when(productService.getProductInfo("13860416")).thenReturn(new ProductPrice(13860416,
 				"Progressive power yoga:Sedona experie (DVD)",
 				new Price(BigDecimal.valueOf(1000), Currency.getInstance(Locale.getDefault()).getCurrencyCode())));
-		MvcResult mvcResult = mockMvc.perform(get("/api/products/13860416/").contentType(MediaType.APPLICATION_JSON))
+		MvcResult mvcResult = mockMvc.perform(get("/api/v1/products/13860416/").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andReturn();
 		String resultString = mvcResult.getResponse().getContentAsString();
@@ -80,23 +91,33 @@ public class ProductControllerTest {
 		assertEquals(result.getPrice().getCurrencyCode(), Currency.getInstance(Locale.getDefault()).getCurrencyCode());
 	}
 
+	/**
+	 * Validating the getProduct Request for the invalid product ID
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void getProductsTest_ForInValidProduct() throws Exception {
 		when(productService.getProductInfo("13860422")).thenReturn(new ProductPrice(13860416,
 				"Progressive power yoga:Sedona experie (DVD)",
 				new Price(BigDecimal.valueOf(1000), Currency.getInstance(Locale.getDefault()).getCurrencyCode())));
-		mockMvc.perform(get("/api/products/13860422/").contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/api/v1/products/13860422/").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andReturn();
 	}
 
+	/**
+	 * Validating the product price update with valid product id in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void updateProductInfoTest_ForValidProductID() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416,
 				new Price(BigDecimal.valueOf(2000), Currency.getInstance(Locale.getDefault()).getCurrencyCode()));
 		priceJson = objMapper.writeValueAsString(productPrice);
 		MockHttpServletResponse response = mockMvc
-				.perform(put("/api/products/13860416/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
+				.perform(put("/api/v1/products/13860416/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
 				.andExpect(status().is2xxSuccessful()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andReturn().getResponse();
 		ResponseInfo result = objMapper.readValue(response.getContentAsString(), ResponseInfo.class);
@@ -105,13 +126,18 @@ public class ProductControllerTest {
 		assertEquals(result.getResponseType(), MessageConstants.RESPONSE_TYPE_SUCCESS);
 	}
 
+	/**
+	 * Validating the product price update with invalid product id in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test(expected = Exception.class)
 	public void updateProductInfoTest_ForInValidProductID() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860422,
 				new Price(BigDecimal.valueOf(2000), Currency.getInstance(Locale.getDefault()).getCurrencyCode()));
 		priceJson = objMapper.writeValueAsString(productPrice);
 		MockHttpServletResponse response = mockMvc
-				.perform(put("/api/products/123456/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
+				.perform(put("/api/v1/products/123456/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andReturn().getResponse();
 		ResponseInfo result = objMapper.readValue(response.getContentAsString(), ResponseInfo.class);
@@ -120,30 +146,47 @@ public class ProductControllerTest {
 		assertEquals(result.getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product price update with valid currency code in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test(expected = Exception.class)
 	public void updateProductInfoTest_WithInValidCurrencyCode() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416, new Price(BigDecimal.valueOf(2000), "ABCD"));
 		priceJson = objMapper.writeValueAsString(productPrice);
-		mockMvc.perform(put("/api/products/13860416/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
+		mockMvc.perform(put("/api/v1/products/13860416/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
 				.andExpect(status().is4xxClientError())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andReturn().getResponse();
 	}
 
+	/**
+	 * Validating the product price update with no currency code information in the
+	 * request
+	 * 
+	 * @throws Exception
+	 */
 	@Test(expected = Exception.class)
 	public void updateProductInfoTest_WithBlankCurrencyCode() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416, new Price(BigDecimal.valueOf(2000), null));
 		priceJson = objMapper.writeValueAsString(productPrice);
-		mockMvc.perform(put("/api/products/13860416/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
+		mockMvc.perform(put("/api/v1/products/13860416/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
 				.andExpect(status().is4xxClientError())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andReturn().getResponse();
 	}
 
+	/**
+	 * Validating the product price update with invalid price information in the
+	 * request
+	 * 
+	 * @throws Exception
+	 */
 	@Test(expected = Exception.class)
 	public void updateProductInfoTest_WithInValidPrice() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416,
 				new Price(BigDecimal.valueOf(-1), Currency.getInstance(Locale.getDefault()).getCurrencyCode()));
 		MockHttpServletResponse response = mockMvc
-				.perform(put("/api/products/13860416/").contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/v1/products/13860416/").contentType(MediaType.APPLICATION_JSON)
 						.content(objMapper.writeValueAsString(productPrice)))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andReturn().getResponse();
@@ -153,11 +196,16 @@ public class ProductControllerTest {
 		assertEquals(result.getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product price update with no price information in the request
+	 * 
+	 * @throws Exception
+	 */
 	@Test(expected = Exception.class)
 	public void updateProductInfoTest_WithNoPrice() throws Exception {
 		ProductPrice productPrice = new ProductPrice(13860416, null);
 		MockHttpServletResponse response = mockMvc
-				.perform(put("/api/products/13860416/").contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/v1/products/13860416/").contentType(MediaType.APPLICATION_JSON)
 						.content(objMapper.writeValueAsString(productPrice)))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andReturn().getResponse();
@@ -167,10 +215,21 @@ public class ProductControllerTest {
 		assertEquals(result.getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
+	/**
+	 * Validating the product Id mismatch between the URI and Request Body
+	 * 
+	 * @throws Exception
+	 */
 	@Test(expected = Exception.class)
 	public void updateProductInfoTest_URIandBodyProductId_Mismatch() throws Exception {
-		mockMvc.perform(put("/api/products/13860422/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
-				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+		MockHttpServletResponse response = mockMvc
+				.perform(put("/api/v1/products/13860422/").contentType(MediaType.APPLICATION_JSON).content(priceJson))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andReturn().getResponse();
+		ResponseInfo result = objMapper.readValue(response.getContentAsString(), ResponseInfo.class);
+		assertEquals(result.getCode(), MessageConstants.MISMATCH_PRODUCT_ID_ERROR_CODE);
+		assertEquals(result.getMessage(), MessageConstants.MISMATCH_PRODUCT_ID_ERROR_DESCRIPTION);
+		assertEquals(result.getResponseType(), MessageConstants.RESPONSE_TYPE_ERROR);
 	}
 
 }

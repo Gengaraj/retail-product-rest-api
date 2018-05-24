@@ -25,13 +25,18 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import lombok.experimental.FieldDefaults;
 
+/*
+ * Spring Security Configuration information
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(new AntPathRequestMatcher("/auth/**"));
+	private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(new AntPathRequestMatcher("/auth/**"),
+			new AntPathRequestMatcher("/swagger-ui.html/**"), new AntPathRequestMatcher("/webjars/**"),
+			new AntPathRequestMatcher("/v2/api-docs/**"), new AntPathRequestMatcher("/swagger-resources/**"));
 	private static final RequestMatcher PROTECTED_URLS = new NegatedRequestMatcher(PUBLIC_URLS);
 
 	TokenAuthenticationProvider provider;

@@ -9,6 +9,9 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/*
+ * Swagger configuration for the API Documentation,
+ */
 @EnableSwagger2
 @Configuration
 public class SwaggerConfig {
@@ -16,7 +19,7 @@ public class SwaggerConfig {
 	@Bean
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-				.apis(RequestHandlerSelectors.basePackage("com.tgt.retail")).paths(PathSelectors.any()).build();
+				.apis(RequestHandlerSelectors.basePackage("com.tgt.retail.api")).paths(PathSelectors.any()).build();
 	}
 
 }

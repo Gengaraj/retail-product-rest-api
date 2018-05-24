@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.web.RedirectStrategy;
 
+/*
+ * Overriding Spring Security's redirect strategy to avoid redirecting to form based login
+ */
 public class NoRedirectStrategy implements RedirectStrategy {
 
 	@Override

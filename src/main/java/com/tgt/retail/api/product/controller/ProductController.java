@@ -24,11 +24,20 @@ import com.tgt.retail.api.product.validator.ProductValidator;
 import com.tgt.retail.api.product.vo.ProductPrice;
 import com.tgt.retail.api.product.vo.ResponseInfo;
 
+/*
+ * Rest Controller to handle the responses to the product service End point
+ */
+/**
+ * @author deegee
+ *
+ */
 @RestController
 @RequestMapping("/api")
 public class ProductController {
 
 	Logger logger = LoggerFactory.getLogger(ProductController.class);
+
+	public static final String URL = "/v1/products/{id}";
 
 	@Autowired
 	ProductValidator productValidator;
@@ -57,8 +66,17 @@ public class ProductController {
 		webDataBinder.setValidator(productValidator);
 	}
 
+	/**
+	 * 
+	 * Request Handler to process the GET request to getInformation about the
+	 * product for the given @param productID and provides the details in the
+	 * response object in JSON Format
+	 * 
+	 * @param productId
+	 * @return
+	 */
 	@ResponseStatus(value = HttpStatus.OK)
-	@GetMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = URL, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ProductPrice getProductById(@PathVariable("id") String productId) {
 		ProductPrice productPrice = null;
 		if (productValidator.isValidProductId(productId)) {
@@ -67,7 +85,15 @@ public class ProductController {
 		return productPrice;
 	}
 
-	@PutMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	/**
+	 * Request handler method to process PUT requests to update price information
+	 * for the given Product information
+	 * 
+	 * @param productPrice
+	 * @param productId
+	 * @return responseEntity
+	 */
+	@PutMapping(value = URL, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ResponseInfo> updateProdcutPrice(@Valid @RequestBody ProductPrice productPrice,
 			@PathVariable("id") String productId) {
 		if (productValidator.isValidProductMatch(productPrice, productId)) {

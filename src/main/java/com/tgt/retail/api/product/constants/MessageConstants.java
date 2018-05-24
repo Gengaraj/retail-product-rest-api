@@ -1,5 +1,8 @@
 package com.tgt.retail.api.product.constants;
 
+/*
+ * Constant file to define messages used to provide more information in the response
+ */
 public interface MessageConstants {
 
 	public static final String RESPONSE_TYPE_SUCCESS = "Success";

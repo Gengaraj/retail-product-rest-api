@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/*
+ * Value Object to hold the price information such as price and corresponding currency code
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Price {
 
@@ -12,7 +15,7 @@ public class Price {
 
 	@JsonProperty("currency_code")
 	private String currencyCode;
-	
+
 	public Price() {
 	}
 
@@ -36,10 +39,10 @@ public class Price {
 	public void setCurrencyCode(String currencyCode) {
 		this.currencyCode = currencyCode;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "{ value : "+this.value+", currency_code :"+this.currencyCode+" }";
+		return "{ value : " + this.value + ", currency_code :" + this.currencyCode + " }";
 	}
 
 }

@@ -18,6 +18,9 @@ import org.springframework.web.client.RestTemplate;
 import com.tgt.retail.api.product.exception.ProductNotFoundException;
 import com.tgt.retail.api.product.vo.Product;
 
+/*
+ * This is wrapper class to submit the request to and receive response from redsky product endpoint using Rest Template to submit the REST API request
+ */
 @Component
 public class ProductClient {
 
@@ -36,11 +39,17 @@ public class ProductClient {
 		this.restTemplate = restTemplate;
 	}
 
+	/**
+	 * To connect with redsky product endpoint for the product informaiton
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public String getProductNameById(Long id) {
 		String productDescription = null;
 		try {
 			Map<String, Long> uriVariables = new HashMap<>();
-		    uriVariables.put("id", (long) id);
+			uriVariables.put("id", (long) id);
 			ResponseEntity<Product> result = restTemplate.exchange(REDSKY_PRODUCT_ENDPOINT_URI, HttpMethod.GET,
 					getRequestEntity(), Product.class, uriVariables);
 			Product product = result.getBody();

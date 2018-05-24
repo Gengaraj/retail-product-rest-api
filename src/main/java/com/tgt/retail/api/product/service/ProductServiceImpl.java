@@ -8,6 +8,9 @@ import com.tgt.retail.api.product.repository.ProductRepository;
 import com.tgt.retail.api.product.vo.Price;
 import com.tgt.retail.api.product.vo.ProductPrice;
 
+/*
+ * Service Implementation to connect with redsky endpoint through Prodcut Client wrapper to receive product information and perfrom CRUD operations on the Product Price collection in Mongo DB. 
+ */
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -16,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductClient productClient;
-	
+
 	@Override
 	public ProductPrice findProductPriceByProductId(long id) {
 		return productRepository.findProductPriceByProductId(id);
@@ -27,9 +30,9 @@ public class ProductServiceImpl implements ProductService {
 		ProductPrice productPrice = null;
 		long id = Long.parseLong(productId);
 		String name = productClient.getProductNameById(id);
-		if(StringUtils.isNotBlank(name)) {
+		if (StringUtils.isNotBlank(name)) {
 			productPrice = this.findProductPriceByProductId(id);
-			if(productPrice==null) {
+			if (productPrice == null) {
 				productPrice = new ProductPrice();
 				productPrice.setPrice(new Price());
 			}
@@ -38,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return productPrice;
 	}
-	
+
 	@Override
 	public void updateProductPrice(ProductPrice productPrice) {
 		productClient.getProductNameById(productPrice.getProductId());

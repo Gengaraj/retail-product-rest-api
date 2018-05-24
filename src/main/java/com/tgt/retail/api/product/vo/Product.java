@@ -1,5 +1,8 @@
 package com.tgt.retail.api.product.vo;
 
+/*
+ * Value Object to hold the product information such as id and name
+ */
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
