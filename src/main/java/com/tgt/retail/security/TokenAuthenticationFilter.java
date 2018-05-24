@@ -20,7 +20,6 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import lombok.experimental.FieldDefaults;
 
-
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -33,10 +32,8 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 	@Override
 	public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
 		final String param = ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION)).orElse(request.getParameter("t"));
-
 		final String token = ofNullable(param).map(value -> removeStart(value, BEARER)).map(String::trim)
 				.orElseThrow(() -> new BadCredentialsException("Missing Authentication Token"));
-
 		final Authentication auth = new UsernamePasswordAuthenticationToken(token, token);
 		return getAuthenticationManager().authenticate(auth);
 	}
